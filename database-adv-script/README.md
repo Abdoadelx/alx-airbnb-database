@@ -28,6 +28,7 @@ SELECT
     b.check_out
 FROM Bookings b
 INNER JOIN Users u ON b.user_id = u.id;
+```
 
 ---
 
@@ -41,6 +42,7 @@ SELECT
     r.comment
 FROM Properties p
 LEFT JOIN Reviews r ON p.id = r.property_id;
+```
 
 ---
 
@@ -55,6 +57,7 @@ SELECT
     b.check_out
 FROM Bookings b
 RIGHT JOIN Properties p ON b.property_id = p.id;
+```
 
 ---
 
@@ -69,5 +72,5 @@ SELECT
     b.check_out
 FROM Users u
 FULL OUTER JOIN Bookings b ON u.id = b.user_id;
-
+```
 ---
