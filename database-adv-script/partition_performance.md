@@ -16,10 +16,23 @@ For our `bookings` table, we partitioned it by the **year of the booking's start
 
 ## Implementation
 
-We modified the existing `bookings` table using the `ALTER TABLE` command to partition it by a `RANGE` of years based on the `start_date` column.
+To ensure the `bookings` table is partitioned from its creation, we add the partitioning logic directly into the `CREATE TABLE` statement. This involves dropping the old table and creating a new, correctly structured one.
 
 ```sql
-ALTER TABLE bookings
+-- First, drop the old table
+DROP TABLE IF EXISTS bookings;
+
+-- Create the new, partitioned table
+CREATE TABLE bookings (
+    booking_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    property_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    -- Foreign key constraints are omitted here for brevity
+)
 PARTITION BY RANGE (YEAR(start_date)) (
     PARTITION p_before_2025 VALUES LESS THAN (2025),
     PARTITION p2025 VALUES LESS THAN (2026),
