@@ -95,7 +95,7 @@ WHERE p.property_id IN (
 ORDER BY p.name ASC;
 ```
 ### 2. Correlated Subquery
-**objective:** Find all users who have made more than 3 bookings.
+**Objective:** Find all users who have made more than 3 bookings.
 ```sql
 SELECT 
     u.user_id,
