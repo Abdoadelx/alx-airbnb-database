@@ -1,4 +1,5 @@
-# Complex SQL Queries with Joins - Airbnb Clone Database#
+# Complex SQL Queries with Joins - Airbnb Clone Database
+---
 
 This document explains the SQL join queries implemented in the `joins_queries.sql` file for the **Airbnb Clone Database**.  
 It demonstrates how to use different types of joins to retrieve meaningful data across multiple tables.
@@ -92,3 +93,23 @@ WHERE p.property_id IN (
     HAVING AVG(r.rating) > 4.0
 )
 ORDER BY p.name ASC;
+```
+### 2. Correlated Subquery
+**objective:** Find all users who have made more than 3 bookings.
+```sql
+SELECT 
+    u.user_id,
+    u.first_name,
+    u.last_name,
+    u.email
+FROM User u
+WHERE (
+    SELECT COUNT(*)
+    FROM Booking b
+    WHERE b.user_id = u.user_id
+) > 3
+ORDER BY u.first_name ASC;
+```
+---
+
+
