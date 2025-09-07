@@ -1,4 +1,4 @@
-# Complex SQL Queries with Joins - Airbnb Clone Database
+# Complex SQL Queries with Joins - Airbnb Clone Database#
 
 This document explains the SQL join queries implemented in the `joins_queries.sql` file for the **Airbnb Clone Database**.  
 It demonstrates how to use different types of joins to retrieve meaningful data across multiple tables.
