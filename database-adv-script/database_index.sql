@@ -2,19 +2,18 @@
 -- Airbnb Clone: Indexing Performance Analysis Script
 -- ===================================================================
 -- This script demonstrates the performance improvement from adding indexes.
--- It first runs an EXPLAIN on a query to show the plan without indexes,
--- then creates the indexes, and finally runs the same EXPLAIN again
--- to show the optimized plan.
+-- It first runs an EXPLAIN ANALYZE on a query to show the plan and actual
+-- execution stats without indexes, then creates the indexes, and finally
+-- runs the same command again to show the optimized plan and stats.
 -- ===================================================================
 
 -- Section 1: Analyze Query Performance BEFORE Adding Indexes
 -- -------------------------------------------------------------------
 -- We are analyzing a common query: finding all bookings for a specific user.
--- Notice the output of this EXPLAIN. The database will likely perform a
--- "full table scan" on the `bookings` table because there is no index
--- on the `user_id` column.
+-- The output of this command will show the execution plan and the *actual time*
+-- it took. Notice the high cost and likely "Full Table Scan".
 
-EXPLAIN SELECT
+EXPLAIN ANALYZE SELECT
     b.booking_id,
     b.start_date,
     p.title
@@ -45,13 +44,11 @@ CREATE INDEX idx_reviews_booking_id ON reviews(booking_id);
 
 -- Section 3: Analyze Query Performance AFTER Adding Indexes
 -- -------------------------------------------------------------------
--- We run the exact same EXPLAIN command again.
--- Now, observe the output. The database should use the new `idx_bookings_user_id`
--- to perform an "index scan" or "index lookup". This is much faster
--- because it can directly find the rows for `user_id = 2` without
--- checking every row in the table. 🚀
+-- We run the exact same EXPLAIN ANALYZE command again.
+-- Now, the execution plan will show the use of the new `idx_bookings_user_id`
+-- and the actual execution time should be significantly lower.
 
-EXPLAIN SELECT
+EXPLAIN ANALYZE SELECT
     b.booking_id,
     b.start_date,
     p.title
