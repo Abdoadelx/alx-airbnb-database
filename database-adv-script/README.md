@@ -32,7 +32,6 @@ INNER JOIN Users u ON b.user_id = u.id;
 ---
 
 ## 2️⃣ LEFT JOIN: Properties with Reviews
-**Query:**
 ```sql
 SELECT 
     p.id AS property_id,
@@ -46,7 +45,6 @@ LEFT JOIN Reviews r ON p.id = r.property_id;
 ---
 
 ## 3️⃣ RIGHT JOIN: Properties with Bookings
-**Query:**
 ```sql
 SELECT 
     b.id AS booking_id,
@@ -61,7 +59,6 @@ RIGHT JOIN Properties p ON b.property_id = p.id;
 ---
 
 ## 4️⃣ FULL OUTER JOIN: Users and Bookings
-**Query:**
 ```sql
 SELECT 
     u.id AS user_id,
