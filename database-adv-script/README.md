@@ -4,6 +4,7 @@
 This document explains the SQL join queries implemented in the `joins_queries.sql` file for the **Airbnb Clone Database**.  
 It demonstrates how to use different types of joins to retrieve meaningful data across multiple tables.
 It also explain **subqueries** (both correlated and non-correlated) which presents in `subqueries.sql`
+Aggregations and Window Functions are also explained
 ---
 
 ## 🔑 Queries Overview
@@ -110,6 +111,30 @@ WHERE (
 ) > 3
 ORDER BY u.first_name ASC;
 ```
+### 3. Total Number of Bookings per User
+```sql
+SELECT 
+    u.id AS user_id,
+    u.name AS user_name,
+    COUNT(b.id) AS total_bookings
+FROM Users u
+LEFT JOIN Bookings b ON u.id = b.user_id
+GROUP BY u.id, u.name
+ORDER BY total_bookings DESC;
+```
+### 4. Rank Properties by Number of Bookings
+```sql
+SELECT 
+    p.id AS property_id,
+    p.name AS property_name,
+    COUNT(b.id) AS total_bookings,
+    RANK() OVER (ORDER BY COUNT(b.id) DESC) AS booking_rank
+FROM Properties p
+LEFT JOIN Bookings b ON p.id = b.property_id
+GROUP BY p.id, p.name
+ORDER BY booking_rank;
+```
 ---
+
 
 
