@@ -2,7 +2,7 @@
 
 This document explains the SQL join queries implemented in the `joins_queries.sql` file for the **Airbnb Clone Database**.  
 It demonstrates how to use different types of joins to retrieve meaningful data across multiple tables.
-
+It also explain **subqueries** (both correlated and non-correlated) which presents in `subqueries.sql`
 ---
 
 ## 🔑 Queries Overview
@@ -74,3 +74,21 @@ FROM Users u
 FULL OUTER JOIN Bookings b ON u.id = b.user_id;
 ```
 ---
+# Queries
+
+### 1. Non-Correlated Subquery
+**Objective:** Find all properties where the average rating is greater than `4.0`.
+
+```sql
+SELECT 
+    p.property_id,
+    p.name AS property_name,
+    p.location
+FROM Property p
+WHERE p.property_id IN (
+    SELECT r.property_id
+    FROM Review r
+    GROUP BY r.property_id
+    HAVING AVG(r.rating) > 4.0
+)
+ORDER BY p.name ASC;
