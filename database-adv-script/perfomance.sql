@@ -1,67 +1,56 @@
 -- ===================================================================
 -- Airbnb Clone: Complex Query Performance Script
 -- ===================================================================
--- This script contains an initial complex query and its optimized version.
--- We use EXPLAIN ANALYZE to inspect the performance of both.
+-- This script contains a specific, filtered query to test performance
+-- under realistic conditions.
 -- ===================================================================
 
--- Section 1: Initial Complex Query (Potentially Unoptimized)
+-- Section 1: Complex Query with Filters
 -- -------------------------------------------------------------------
--- Objective: Retrieve a comprehensive list of all bookings, including
--- details about the user who booked and the property that was booked.
+-- Objective: Retrieve all paid bookings for properties in 'Cairo'
+-- that start on or after September 1st, 2025.
 --
--- This query joins three tables: bookings, users, and properties.
--- Without proper indexes on the JOIN keys (user_id, property_id),
--- this query would be very slow on a large dataset.
+-- This query joins FOUR tables and uses WHERE with AND to filter the results.
+-- Its performance heavily relies on indexes on the JOIN keys (booking_id, user_id,
+-- property_id) and the columns in the WHERE clause (p.city, b.start_date).
 
 EXPLAIN ANALYZE
 SELECT
     b.booking_id,
     b.start_date,
-    b.end_date,
-    b.total_price,
-    u.full_name AS guest_name,
-    u.email AS guest_email,
     p.title AS property_title,
-    p.address AS property_address,
-    p.city AS property_city
+    p.city,
+    u.full_name AS guest_name,
+    py.amount,
+    py.status AS payment_status
 FROM
     bookings AS b
 JOIN
+    properties AS p ON b.property_id = p.property_id
+JOIN
     users AS u ON b.user_id = u.user_id
 JOIN
-    properties AS p ON b.property_id = p.property_id;
+    payments AS py ON b.booking_id = py.booking_id
+WHERE
+    p.city = 'Cairo'
+AND
+    b.start_date >= '2025-09-01'
+AND
+    py.status = 'completed';
 
 -- ===================================================================
-
--- Section 2: Optimized Query
+-- Section 2: Optimization Notes
 -- -------------------------------------------------------------------
--- The optimization for this type of query doesn't come from changing
--- the query's structure (the JOINs are necessary), but from ensuring
--- the database can execute the JOINs efficiently.
+-- The query above is considered "optimized" because its performance
+-- depends on the database structure. For this query to be fast, the
+-- following indexes must exist:
 --
--- The performance gain comes from the indexes we created previously:
--- -> idx_bookings_user_id ON bookings(user_id)
--- -> idx_bookings_property_id ON bookings(property_id)
+-- 1. Indexes on Foreign Keys for JOINs:
+--    - idx_bookings_user_id ON bookings(user_id)
+--    - idx_bookings_property_id ON bookings(property_id)
+--    - idx_payments_booking_id ON payments(booking_id) -- On the new table
 --
--- When these indexes exist, the database can use fast "Index Scans"
--- instead of slow "Full Table Scans" to find the matching rows for the JOINs.
--- The query text remains the same, but its execution is dramatically faster.
+-- 2. Indexes on Columns in the WHERE clause:
+--    - idx_property_city ON properties(city)
+--    - idx_booking_dates ON bookings(start_date, end_date)
 
-EXPLAIN ANALYZE
-SELECT
-    b.booking_id,
-    b.start_date,
-    b.end_date,
-    b.total_price,
-    u.full_name AS guest_name,
-    u.email AS guest_email,
-    p.title AS property_title,
-    p.address AS property_address,
-    p.city AS property_city
-FROM
-    bookings AS b
-JOIN
-    users AS u ON b.user_id = u.user_id
-JOIN
-    properties AS p ON b.property_id = p.property_id;
